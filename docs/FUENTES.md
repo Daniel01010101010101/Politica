@@ -62,7 +62,7 @@ Para hallar el `channel_id`: abra el canal, vea el código fuente y busque
 Los medios cambian de plataforma y con ella la dirección de sus feeds. Si una fuente
 aparece en rojo varios días seguidos:
 
-1. Abra la salida de la acción **Recolector diario**: dice qué feeds falló y con qué error.
+1. Abra la salida de la acción **Recolector horario**: dice qué feeds falló y con qué error.
 2. Busque el nuevo feed. Suele estar en `/rss`, `/feeds`, `/arcio/rss/` o en una
    etiqueta `<link rel="alternate" type="application/rss+xml">` del código fuente.
 3. Añádalo **antes** de los demás en el arreglo `feeds` de esa fuente.

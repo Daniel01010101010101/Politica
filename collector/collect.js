@@ -2,11 +2,12 @@
 /* ===================================================================
    Recolector — Centro de Inteligencia Política
    -------------------------------------------------------------------
-   Corre en el servidor (GitHub Actions) todos los días a las 07:00 de
-   Bogotá. Lee las fuentes originales, normaliza y escribe:
+   Corre en el servidor (GitHub Actions) cada hora en punto. Lee las
+   fuentes originales, normaliza y escribe:
 
      data/latest.json           instantánea que consume el tablero
-     data/history/AAAA-MM-DD.json  archivo del día
+     data/history/AAAA-MM-DD.json  archivo del día, reescrito en cada
+                                   lectura con todo lo publicado ese día
 
    Sin dependencias externas: usa el fetch nativo de Node 18+.
    Guarda titular, enlace, fecha y extracto corto con enlace de vuelta
@@ -24,7 +25,13 @@ const DIR_HIST = path.join(DIR_DATOS, 'history');
 const TIEMPO_LIMITE = 20000;
 const MAX_POR_FUENTE = CFG.red.maxItemsPorFuente || 40;
 const VENTANA_DIAS = CFG.red.ventanaDias || 30;
+const ZONA = CFG.programacion.zonaHoraria || 'America/Bogota';
 const AGENTE = 'CentroInteligenciaPolitica/1.0 (lector RSS; contacto: configure en docs/FUENTES.md)';
+
+/* Fecha AAAA-MM-DD en la zona del tablero ('en-CA' entrega ese formato) */
+function diaEnZona(ms) {
+  return new Date(ms).toLocaleDateString('en-CA', { timeZone: ZONA });
+}
 
 /* ---------------- utilidades de texto ---------------- */
 function desescapar(s) {
@@ -218,6 +225,14 @@ function huella(titulo) {
   const trends = await leerTrends();
   const x = await leerX();
 
+  const respondieron = resultados.filter((r) => r.estado === 'ok').length;
+  // Con lecturas cada hora, una caída de red no puede sobrescribir la
+  // instantánea buena con uno vacío: si nadie respondió, se sale sin escribir.
+  if (!respondieron) {
+    console.error('Ninguna fuente respondió: se conserva la instantánea anterior.');
+    process.exit(1);
+  }
+
   const paquete = {
     generado: Date.now(),
     generadoISO: new Date().toISOString(),
@@ -233,19 +248,15 @@ function huella(titulo) {
   fs.mkdirSync(DIR_HIST, { recursive: true });
   fs.writeFileSync(path.join(DIR_DATOS, 'latest.json'), JSON.stringify(paquete));
 
-  const hoy = new Date();
-  const dia = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0') + '-' + String(hoy.getDate()).padStart(2, '0');
-  const delDia = items.filter((i) => {
-    const d = new Date(i.fecha);
-    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') === dia;
-  });
+  // El servidor de GitHub corre en UTC y ahora leemos también de noche:
+  // el día del archivo se calcula en Bogotá para que no se parta a las 19:00.
+  const dia = diaEnZona(Date.now());
+  const delDia = items.filter((i) => diaEnZona(i.fecha) === dia);
   fs.writeFileSync(path.join(DIR_HIST, dia + '.json'), JSON.stringify({
     dia, generado: paquete.generado, n: delDia.length, items: delDia
   }));
 
-  const ok = resultados.filter((r) => r.estado === 'ok').length;
   console.log('\n' + items.length + ' despachos únicos · ' + descartados + ' descartados · ' +
-              ok + '/' + activas.length + ' fuentes respondieron · ' + Math.round(paquete.duracionMs / 1000) + ' s');
-
-  if (!ok) { console.error('Ninguna fuente respondió.'); process.exit(1); }
+              respondieron + '/' + activas.length + ' fuentes respondieron · ' +
+              Math.round(paquete.duracionMs / 1000) + ' s');
 })().catch((e) => { console.error('Fallo del recolector:', e); process.exit(1); });

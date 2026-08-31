@@ -4,9 +4,9 @@ on:
   push:
     branches: [main]
   # Los commits hechos con GITHUB_TOKEN no disparan otros flujos, así que
-  # el corte diario del recolector no republicaría el sitio por sí solo.
+  # las lecturas del recolector no republicarían el sitio por sí solas.
   workflow_run:
-    workflows: ["Recolector diario"]
+    workflows: ["Recolector horario"]
     types: [completed]
   workflow_dispatch:
 

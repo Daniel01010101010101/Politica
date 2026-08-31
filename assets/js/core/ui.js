@@ -81,8 +81,8 @@ window.UI = (function () {
     }
     if (activo && motivo) {
       const p = $('#progreso-detalle');
-      const glosa = { programado: 'Corte automático de las 07:00', alAbrir: 'Primera lectura del día',
-                      manual: 'Actualización solicitada', reanudado: 'Reanudando tras el corte' };
+      const glosa = { programado: 'Lectura automática de la hora', alAbrir: 'Primera lectura',
+                      manual: 'Actualización solicitada', reanudado: 'Poniendo al día tras el último corte' };
       if (p) p.textContent = glosa[motivo] || '';
     }
   }
@@ -108,7 +108,7 @@ window.UI = (function () {
         el.innerHTML = '<div class="estado-vacio">' +
           '<p>Sin despachos en la base local.</p>' +
           '<p class="tenue">Pulse «Actualizar ahora» para leer las fuentes. Si el tablero está publicado, ' +
-          'el recolector escribe <code>data/latest.json</code> cada día a las 07:00.</p></div>';
+          'el recolector escribe <code>data/latest.json</code> cada hora.</p></div>';
       }
     });
   }
@@ -148,7 +148,7 @@ window.UI = (function () {
     const sello = $('#sello-actualizacion');
     if (sello) {
       const origen = e.origen === 'directo' ? 'lectura directa' :
-                     e.origen === 'recolector' ? 'recolector 07:00' : 'instantánea';
+                     e.origen === 'recolector' ? 'recolector horario' : 'instantánea';
       sello.innerHTML = e.generado
         ? 'Actualizado ' + CIP.hace(e.generado) + ' <span class="tenue">· ' + origen + '</span>'
         : 'Sin lectura';

@@ -39,7 +39,7 @@
     if (c) c.textContent = CIP_SCHED.cuentaRegresiva();
     const s = $('#sello-actualizacion');
     if (s && CIP.estado.generado) {
-      const origen = CIP.estado.origen === 'directo' ? 'lectura directa' : 'recolector 07:00';
+      const origen = CIP.estado.origen === 'directo' ? 'lectura directa' : 'recolector horario';
       s.innerHTML = 'Actualizado ' + CIP.hace(CIP.estado.generado) + ' <span class="tenue">· ' + origen + '</span>';
     }
   }, 1000);
@@ -88,9 +88,12 @@
   });
 
   /* ---- pie técnico ---- */
+  const cadaMin = CIP_SOURCES.programacion.intervaloMinutos || 60;
   $('#pie-tecnico').textContent =
-    CIP_SOURCES.fuentes.length + ' fuentes configuradas · corte diario ' +
-    CIP_SOURCES.programacion.horaDiaria + ' (' + CIP_SOURCES.programacion.zonaHoraria + ') · ' +
+    CIP_SOURCES.fuentes.length + ' fuentes configuradas · actualización cada ' +
+    (cadaMin === 60 ? 'hora' : cadaMin + ' minutos') +
+    ' (' + CIP_SOURCES.programacion.zonaHoraria + ') · ' +
+    'parte del día ' + CIP_SOURCES.programacion.horaDiaria + ' · ' +
     'ventana de análisis ' + CIP_SOURCES.red.ventanaDias + ' días';
 
   /* ---- navegación e inicio ---- */

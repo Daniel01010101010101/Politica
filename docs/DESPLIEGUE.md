@@ -18,19 +18,24 @@ En el repositorio, **Settings → Pages → Source: GitHub Actions**. El flujo
 Si prefiere la opción sin Actions, elija **Deploy from a branch → main → / (root)**.
 Funciona igual: el archivo `.nojekyll` evita que Jekyll se coma las carpetas.
 
-## 2. Activar el corte de las 07:00
+## 2. Activar la recolección horaria
 
 En **Settings → Actions → General → Workflow permissions**, marque
 **Read and write permissions**. Sin eso, el recolector lee las fuentes pero no puede
 publicar los datos.
 
-Luego, en **Actions → Recolector diario → Run workflow**, lance una corrida manual
+Luego, en **Actions → Recolector horario → Run workflow**, lance una corrida manual
 para llenar `data/latest.json` de entrada. A partir de ahí corre solo.
 
-> El cron está en `0 12 * * *` (UTC), que son las 07:00 en Bogotá todo el año porque
-> Colombia no cambia de hora. Si mueve la hora del corte, cambie también
-> `programacion.horaDiaria` en `sources.js` para que la cuenta regresiva del tablero
-> siga siendo cierta.
+> El cron está en `0 * * * *` (UTC): una lectura cada hora en punto. Como Colombia no
+> cambia de hora, esas horas en punto también lo son en Bogotá. Si cambia la frecuencia,
+> mueva las dos piezas a la vez: el `cron` del flujo y `programacion.intervaloMinutos`
+> en `sources.js`, que es lo que el tablero usa para su cuenta regresiva.
+>
+> Veinticuatro corridas diarias caben de sobra en la cuota de Actions de un repositorio
+> público (son gratuitas) y cada una tarda menos de dos minutos. En un repositorio
+> privado sí consumen minutos: ahí conviene subir `intervaloMinutos` a 120 o 180 y
+> ajustar el cron a `0 */2 * * *`.
 
 GitHub desactiva los cron de los repositorios sin actividad por 60 días. Un *commit*
 cualquiera los reactiva.

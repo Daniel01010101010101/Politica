@@ -3,12 +3,14 @@
    -------------------------------------------------------------------
    Dos relojes independientes, por diseño:
 
-   1. Servidor (GitHub Actions, cron 0 12 * * * UTC = 07:00 Bogotá).
-      Corre aunque nadie tenga el tablero abierto. Es el reloj real.
+   1. Servidor (GitHub Actions, cron 0 * * * * UTC = cada hora en punto,
+      también en Bogotá). Corre aunque nadie tenga el tablero abierto.
+      Es el reloj real.
 
-   2. Navegador (este archivo). Cuando la pestaña está abierta,
-      recarga a las 07:00 locales y también al abrir el tablero si la
-      última lectura es anterior al corte de hoy.
+   2. Navegador (este archivo). Cuando la pestaña está abierta, relee al
+      cumplirse cada intervalo (`programacion.intervaloMinutos`) y también
+      al abrir el tablero si la última lectura quedó antes del último
+      corte de hora.
    =================================================================== */
 window.CIP_SCHED = (function () {
   'use strict';
@@ -16,64 +18,77 @@ window.CIP_SCHED = (function () {
   const CFG = window.CIP_SOURCES.programacion;
   let temporizador = null;
   let alDisparar = null;
+  let objetivo = 0;      // instante del próximo corte que estamos esperando
 
-  function partesHora() {
-    const p = (CFG.horaDiaria || '07:00').split(':');
-    return { h: parseInt(p[0], 10) || 7, m: parseInt(p[1], 10) || 0 };
+  /* Intervalo entre lecturas, en milisegundos (por defecto, una hora) */
+  function intervaloMs() {
+    const m = parseInt(CFG.intervaloMinutos, 10);
+    return (m > 0 ? m : 60) * 60000;
   }
 
-  /* Instante del corte diario más reciente ya ocurrido */
-  function corteDeHoy(ref) {
-    const ahora = ref ? new Date(ref) : new Date();
-    const { h, m } = partesHora();
-    const corte = new Date(ahora);
-    corte.setHours(h, m, 0, 0);
-    if (corte > ahora) corte.setDate(corte.getDate() - 1);
-    return corte.getTime();
+  /* Los cortes se alinean con la medianoche local: con 60 min caen en
+     punto; con 30 min, en punto y media. */
+  function medianocheLocal() {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
   }
 
-  function proximoCorte() {
-    const ahora = new Date();
-    const { h, m } = partesHora();
-    const prox = new Date(ahora);
-    prox.setHours(h, m, 0, 0);
-    if (prox <= ahora) prox.setDate(prox.getDate() + 1);
-    return prox.getTime();
+  /* Instante del corte más reciente ya ocurrido */
+  function ultimaLectura() {
+    const iv = intervaloMs();
+    const base = medianocheLocal();
+    return base + Math.floor((Date.now() - base) / iv) * iv;
+  }
+
+  function proximaLectura() {
+    const iv = intervaloMs();
+    const base = medianocheLocal();
+    return base + (Math.floor((Date.now() - base) / iv) + 1) * iv;
   }
 
   function programar() {
     if (temporizador) clearTimeout(temporizador);
-    const espera = proximoCorte() - Date.now();
-    // setTimeout se degrada con esperas muy largas: reprogramamos por tramos
-    const tramo = Math.min(espera, 30 * 60 * 1000);
-    temporizador = setTimeout(function () {
-      if (Date.now() >= proximoCorte() - 1000) {
-        if (alDisparar) alDisparar('programado');
-      }
+    objetivo = proximaLectura();
+    esperar();
+  }
+
+  function esperar() {
+    const restante = objetivo - Date.now();
+    if (restante <= 1000) {
+      if (alDisparar) alDisparar('programado');
       programar();
-    }, tramo);
+      return;
+    }
+    // setTimeout se degrada en pestañas de fondo: esperamos por tramos y
+    // comparamos siempre contra el reloj, no contra el temporizador
+    temporizador = setTimeout(esperar, Math.min(restante, 5 * 60 * 1000));
+  }
+
+  /* ¿La última lectura guardada quedó antes del corte vigente? */
+  function vencida() {
+    const u = window.CIP_STORE.pref('ultimaActualizacion');
+    return !u || u < ultimaLectura();
   }
 
   function iniciar(callback) {
     alDisparar = callback;
-    const ultima = window.CIP_STORE.pref('ultimaActualizacion');
-    if (!ultima || ultima < corteDeHoy()) {
-      // El tablero se abrió después del corte y aún no se ha leído hoy
+    if (vencida()) {
+      // El tablero se abrió después del corte y aún no se ha leído
       setTimeout(function () { if (alDisparar) alDisparar('alAbrir'); }, 300);
     } else {
       if (alDisparar) alDisparar('cache');
     }
     programar();
-    // Al volver a la pestaña, verificar si se pasó el corte
+    // Al volver a la pestaña, verificar si se pasó algún corte
     document.addEventListener('visibilitychange', function () {
       if (document.visibilityState !== 'visible') return;
-      const u = window.CIP_STORE.pref('ultimaActualizacion');
-      if (!u || u < corteDeHoy()) { if (alDisparar) alDisparar('reanudado'); }
+      if (vencida()) { if (alDisparar) alDisparar('reanudado'); }
     });
   }
 
   function cuentaRegresiva() {
-    const ms = proximoCorte() - Date.now();
+    const ms = Math.max(0, proximaLectura() - Date.now());
     const h = Math.floor(ms / 3600000);
     const m = Math.floor((ms % 3600000) / 60000);
     const s = Math.floor((ms % 60000) / 1000);
@@ -83,8 +98,9 @@ window.CIP_SCHED = (function () {
   return {
     iniciar: iniciar,
     programar: programar,
-    proximoCorte: proximoCorte,
-    corteDeHoy: corteDeHoy,
+    intervaloMs: intervaloMs,
+    proximaLectura: proximaLectura,
+    ultimaLectura: ultimaLectura,
     cuentaRegresiva: cuentaRegresiva
   };
 })();

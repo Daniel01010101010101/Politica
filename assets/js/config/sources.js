@@ -326,9 +326,10 @@
        7. PROGRAMACIÓN
        -------------------------------------------------------------- */
     programacion: {
-      horaDiaria: '07:00',
+      intervaloMinutos: 60,   // cada cuánto vuelve a leer las fuentes
+      horaDiaria: '07:00',    // ancla del «parte del día» para el módulo 11
       zonaHoraria: 'America/Bogota',
-      utcCron: '0 12 * * *'   // 07:00 en Bogotá (UTC-5, sin horario de verano)
+      utcCron: '0 * * * *'    // cada hora en punto (Bogotá es UTC-5 fijo)
     },
 
     /* --------------------------------------------------------------

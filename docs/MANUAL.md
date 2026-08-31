@@ -2,9 +2,9 @@
 
 ## 1. Qué es esto
 
-Un sistema de monitoreo de prensa y actividad institucional colombiana. Todos los días
-a las 07:00 sale a leer 24 fuentes, clasifica lo que encuentra y lo presenta ordenado
-por relevancia política.
+Un sistema de monitoreo de prensa y actividad institucional colombiana. Cada hora en
+punto sale a leer 24 fuentes, clasifica lo que encuentra y lo presenta ordenado por
+relevancia política.
 
 **Lo que hace:** recoge, mide, ordena y compara. Le dice qué se publicó, quién aparece,
 con qué tono, qué se acelera y qué se apaga.
@@ -18,24 +18,32 @@ generador de argumentos. La lectura política la pone usted.
 
 ---
 
-## 2. La cadena diaria
+## 2. La cadena horaria
 
-Esto es lo que ocurre cada mañana sin que nadie toque nada:
+Esto es lo que ocurre cada hora, sin que nadie toque nada:
 
-| Hora (Bogotá) | Qué pasa |
+| Minuto (Bogotá) | Qué pasa |
 |---|---|
-| 07:00 | GitHub arranca el flujo «Recolector diario» |
-| 07:00–07:02 | Un servidor de GitHub lee las 24 fuentes en lotes de 6 |
-| 07:02 | Normaliza, deduplica y guarda `data/latest.json` más una copia fechada en `data/history/` |
-| 07:02 | Ese commit dispara «Publicar en GitHub Pages» |
-| 07:04 | El sitio queda actualizado |
+| :00 | GitHub arranca el flujo «Recolector horario» |
+| :00–:02 | Un servidor de GitHub lee las 24 fuentes en lotes de 6 |
+| :02 | Normaliza, deduplica y guarda `data/latest.json` más el archivo del día en `data/history/`, que se reescribe con todo lo publicado en la jornada |
+| :02 | Ese commit dispara «Publicar en GitHub Pages» |
+| :04 | El sitio queda actualizado |
+
+El tablero abierto en el navegador sigue el mismo reloj: al llegar la hora en punto
+relee la instantánea, y también lo hace al volver a la pestaña si se pasó un corte.
 
 Cuando usted abre el tablero, su navegador descarga ese archivo y hace **todo el
 análisis localmente**: sentimiento, actores, temas, impacto, alertas, agrupaciones. Por
 eso carga rápido y por eso funciona igual con o sin conexión una vez cargado.
 
-El cron está en `0 12 * * *` UTC. Colombia no cambia de hora, así que siempre son las
-07:00. GitHub puede demorarse unos minutos en horas de alta carga; no es un fallo.
+El cron está en `0 * * * *` UTC. Colombia no cambia de hora, así que las horas en punto
+de UTC son horas en punto en Bogotá. GitHub puede demorarse unos minutos en horas de
+alta carga; no es un fallo.
+
+El **parte del día** —las comparaciones del módulo 11— sigue anclado a la jornada de
+Bogotá: las lecturas de la noche alimentan el archivo del día correcto, no el del día
+siguiente en UTC.
 
 **Dos cosas que debe saber:**
 
