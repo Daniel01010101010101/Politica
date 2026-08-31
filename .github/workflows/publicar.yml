@@ -3,6 +3,11 @@ name: Publicar en GitHub Pages
 on:
   push:
     branches: [main]
+  # Los commits hechos con GITHUB_TOKEN no disparan otros flujos, así que
+  # el corte diario del recolector no republicaría el sitio por sí solo.
+  workflow_run:
+    workflows: ["Recolector diario"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -16,6 +21,8 @@ concurrency:
 
 jobs:
   publicar:
+    # Si el recolector falló, no tiene sentido republicar
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.despliegue.outputs.page_url }}
