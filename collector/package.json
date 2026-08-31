@@ -1,0 +1,12 @@
+{
+  "name": "cip-recolector",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lee las fuentes originales y escribe data/latest.json para el Centro de Inteligencia Política",
+  "main": "collect.js",
+  "scripts": {
+    "start": "node collect.js",
+    "recolectar": "node collect.js"
+  },
+  "engines": { "node": ">=18" }
+}

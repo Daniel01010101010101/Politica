@@ -1,0 +1,151 @@
+# Centro de Inteligencia Política · Colombia
+
+Tablero de seguimiento político que lee las fuentes originales, las clasifica y las
+convierte en un parte diario. Está pensado para publicarse en GitHub Pages y
+actualizarse solo todos los días a las **07:00 de Bogotá**.
+
+No hay una sola noticia escrita a mano en el código. Todo lo que ve el tablero llega
+de los feeds y las APIs que aparecen en `assets/js/config/sources.js`.
+
+---
+
+## Cómo llegan los datos
+
+El sistema tiene dos rutas, y usa la primera que funcione.
+
+**Ruta A — recolector en el servidor (la recomendada).**
+Una acción de GitHub corre `collector/collect.js` a las 12:00 UTC, que son las 07:00
+en Bogotá. El script lee cada fuente, normaliza, deduplica y escribe
+`data/latest.json` más el archivo del día en `data/history/`. Después hace *commit*.
+El navegador solo lee ese JSON: no hay CORS, no hay límites de proxy y funciona
+aunque nadie tenga el tablero abierto.
+
+**Ruta B — lectura directa desde el navegador.**
+En «Fuentes y ajustes» puede activar la lectura directa: el navegador pide los RSS a
+través de un proxy CORS. Sirve para refrescar entre cortes. Los proxies públicos
+limitan peticiones; para uso serio despliegue el suyo (`docs/DESPLIEGUE.md`).
+
+El botón **Actualizar ahora** fuerza el ciclo completo en cualquier momento, use la
+ruta que use.
+
+## Qué hace con ellos
+
+Todo el análisis ocurre en su navegador, sobre el texto que devuelven las fuentes:
+
+| Paso | Dónde | Qué hace |
+|---|---|---|
+| Deduplicación | `core/nlp.js` → `huella()` | Une la misma noticia publicada por varios medios y cuenta cuántos la replican |
+| Sentimiento | `core/nlp.js` → `sentimiento()` | Léxico en español de ~200 términos políticos, con negación («no hubo escándalo») e intensificadores |
+| Entidades | `core/nlp.js` → `detecta()` | Reconoce actores, partidos y entidades por nombre y alias |
+| Temas | `core/nlp.js` → `detectaTemas()` | Dieciséis temas vigilados con peso de severidad |
+| Impacto | `core/nlp.js` → `impacto()` | Puntaje 0–1: fuente 20 %, actor 22 %, tema 26 %, corroboración 12 %, recencia 10 %, carga emocional 6 %, alerta 4 % |
+| Resumen | `core/nlp.js` → `resumen()` | Extractivo: escoge las frases más densas del propio despacho, no redacta texto nuevo |
+
+El puntaje de impacto es auditable: pase el cursor sobre la barra de cualquier
+despacho del módulo 1 y verá los cinco componentes que lo produjeron.
+
+## Los doce módulos
+
+| | Módulo | Responde a |
+|---|---|---|
+| 01 | Resumen del día | Qué pasó y qué pesa |
+| 02 | Radar presidencial | Cuánto se habla del Ejecutivo y en qué tono |
+| 03 | Congreso | Qué avanza, qué se traba, qué se hunde |
+| 04 | Partidos | Quién ocupa espacio y quién lo pierde |
+| 05 | Bogotá | Alcaldía, Concejo y los seis ejes del Distrito |
+| 06 | Sentimiento | Cómo se habla de cada actor, partido y entidad |
+| 07 | Tendencias sociales | Qué términos se aceleran esta semana |
+| 08 | Nube de palabras | Vocabulario dominante en 24 h, 7 y 30 días |
+| 09 | Mapa de actores | Quién aparece con quién |
+| 10 | Alertas tempranas | Qué exige atención hoy |
+| 11 | Base histórica | Cómo se compara con la semana, el mes y el año |
+| 12 | Lectura estratégica | Riesgos, oportunidades y escenarios |
+
+El módulo 12 no consulta ningún modelo de lenguaje. Aplica reglas explícitas sobre
+los indicadores medidos y cada afirmación enlaza los despachos que la sustentan.
+
+## Estructura
+
+```
+.
+├── index.html                     tablero completo
+├── assets/
+│   ├── css/styles.css             sistema visual
+│   └── js/
+│       ├── config/sources.js      ← fuentes, actores, partidos, temas
+│       ├── core/nlp.js            motor de análisis en español
+│       ├── core/store.js          IndexedDB (histórico) + LocalStorage
+│       ├── core/fetcher.js        lectura de instantánea y de RSS
+│       ├── core/scheduler.js      corte diario de las 07:00
+│       ├── core/ui.js             cabecera, navegación, gráficos
+│       ├── modules/panorama.js         módulos 1–2
+│       ├── modules/institucional.js    módulos 3–5
+│       ├── modules/percepcion.js       módulos 6–8
+│       ├── modules/estrategia.js       módulos 9–12
+│       ├── app.js                 ciclo de actualización y estado
+│       └── main.js                arranque y controles
+├── collector/collect.js           recolector Node, sin dependencias
+├── data/
+│   ├── latest.json                instantánea vigente
+│   └── history/AAAA-MM-DD.json    archivo diario
+├── .github/workflows/
+│   ├── recolector.yml             cron 07:00 Bogotá
+│   └── publicar.yml               publicación en Pages
+└── docs/
+    ├── DESPLIEGUE.md
+    └── FUENTES.md
+```
+
+## Ponerlo a andar
+
+```bash
+git clone https://github.com/USUARIO/REPOSITORIO.git
+cd REPOSITORIO
+node collector/collect.js      # primera lectura: llena data/latest.json
+python3 -m http.server 8080    # o: npx serve
+```
+
+Abra `http://localhost:8080`. Necesita servidor local: abrir el archivo con doble
+clic impide leer `data/latest.json` por las reglas de origen del navegador.
+
+Para publicarlo, siga `docs/DESPLIEGUE.md`.
+
+## Configurar
+
+Todo se toca en un solo archivo: `assets/js/config/sources.js`.
+
+- **Agregar un medio**: añada una entrada a `fuentes` con su feed y un peso entre 0 y 1.
+- **Vigilar a alguien**: añádalo a `actores` con sus alias y un peso de relevancia.
+- **Vigilar un asunto**: añádalo a `temas` con las palabras que lo delatan.
+- **Cambiar la hora del corte**: `programacion.horaDiaria` y el `cron` de
+  `.github/workflows/recolector.yml` (recuerde que el cron va en UTC).
+
+## Ajustar el ánimo del sistema
+
+Los umbrales viven en `core/nlp.js`:
+
+- **Bandas de impacto** → función `impacto()`. Hoy: Muy Alto ≥ 0.70, Alto ≥ 0.55,
+  Medio ≥ 0.42. Si el módulo 1 le parece inflado, suba los cortes.
+- **Disparadores de alerta** → constante `ALERTAS`. Añada los términos propios de su
+  sector; los del nivel rojo encienden el tablero del módulo 10.
+- **Léxico de sentimiento** → constante `LEXICO`, valores entre −3 y 3.
+
+## Límites que conviene conocer
+
+- **X / Twitter** exige plan de pago. Sin `X_BEARER_TOKEN` el módulo 7 sigue
+  funcionando: deriva las tendencias de los titulares en vez de la red social.
+- **Google Trends** no tiene API oficial. El recolector lee su RSS público de
+  búsquedas destacadas; si Google lo cambia, el módulo lo indica y sigue andando.
+- **Senado, Cámara y Concejo** no publican RSS estable. Se consultan por búsqueda
+  restringida a su dominio, que devuelve enlaces al sitio oficial.
+- **El sentimiento por léxico no entiende ironía.** Sirve para ver tendencias
+  agregadas, no para juzgar un titular suelto.
+- **El cron de GitHub puede demorarse** algunos minutos en horas de alta carga.
+
+## Uso legítimo
+
+El tablero guarda titular, enlace, fecha y un extracto corto, y siempre enlaza a la
+publicación original. No aloja artículos completos ni los reproduce. Antes de
+darle un uso comercial, revise los términos de cada medio: varios permiten el RSS
+solo para uso personal. El recolector se identifica con un *user-agent* propio y
+lee a un ritmo moderado; no lo acelere.

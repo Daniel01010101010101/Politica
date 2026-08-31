@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es-CO" data-tema-inicial="oscuro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centro de Inteligencia Política · Pacto Histórico Colombia</title>
+<meta name="description" content="Tablero de seguimiento político de Colombia: Presidencia, Congreso, partidos, Bogotá y organismos de control, leído directamente de las fuentes originales.">
+<meta name="color-scheme" content="dark light">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css">
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 40'><path d='M0 0h32v26L16 40 0 26Z' fill='%238B0000'/></svg>">
+</head>
+<body>
+
+<a class="salto-contenido" href="#m1">Saltar al contenido</a>
+
+<!-- ============ RAIL ============ -->
+<nav id="lateral" aria-label="Índice de módulos">
+  <div class="marca">
+    <div class="marca-escudo" aria-hidden="true"></div>
+    <h1>Centro de Inteligencia Política</h1>
+    <p>Pacto Histórico · Colombia</p>
+  </div>
+
+  <div class="nav-modulos">
+    <div class="nav-grupo">Panorama</div>
+    <a class="nav-modulo" href="#m1" data-destino="m1"><b>01</b> Resumen del día</a>
+    <a class="nav-modulo" href="#m2" data-destino="m2"><b>02</b> Radar presidencial</a>
+
+    <div class="nav-grupo">Instituciones</div>
+    <a class="nav-modulo" href="#m3" data-destino="m3"><b>03</b> Congreso</a>
+    <a class="nav-modulo" href="#m4" data-destino="m4"><b>04</b> Partidos políticos</a>
+    <a class="nav-modulo" href="#m5" data-destino="m5"><b>05</b> Bogotá</a>
+
+    <div class="nav-grupo">Percepción</div>
+    <a class="nav-modulo" href="#m6" data-destino="m6"><b>06</b> Sentimiento</a>
+    <a class="nav-modulo" href="#m7" data-destino="m7"><b>07</b> Tendencias sociales</a>
+    <a class="nav-modulo" href="#m8" data-destino="m8"><b>08</b> Nube de palabras</a>
+
+    <div class="nav-grupo">Estrategia</div>
+    <a class="nav-modulo" href="#m9" data-destino="m9"><b>09</b> Mapa de actores</a>
+    <a class="nav-modulo" href="#m10" data-destino="m10"><b>10</b> Alertas tempranas</a>
+    <a class="nav-modulo" href="#m11" data-destino="m11"><b>11</b> Base histórica</a>
+    <a class="nav-modulo" href="#m12" data-destino="m12"><b>12</b> Lectura estratégica</a>
+  </div>
+
+  <div class="lateral-pie">
+    <span id="sello-actualizacion">Sin lectura</span>
+    <button type="button" id="btn-ajustes">Fuentes y ajustes</button>
+  </div>
+</nav>
+
+<!-- ============ PRINCIPAL ============ -->
+<div id="principal">
+
+  <header class="cabecera">
+    <div class="cabecera-fila">
+      <button class="btn-icono" id="abrir-rail" aria-label="Abrir el índice de módulos">☰</button>
+
+      <div class="cabecera-titulo">
+        <h2>Parte diario</h2>
+        <span id="fecha-larga"></span>
+      </div>
+
+      <div class="tira-kpi">
+        <div class="kpi" id="kpi-volumen">
+          <span class="kpi-etiqueta">Despachos hoy</span>
+          <span class="kpi-valor mono">—</span>
+          <span class="kpi-delta"></span>
+        </div>
+        <div class="kpi" id="kpi-alertas">
+          <span class="kpi-etiqueta">Alertas rojas</span>
+          <span class="kpi-valor mono">—</span>
+          <span class="kpi-delta"></span>
+        </div>
+        <div class="kpi" id="kpi-impacto">
+          <span class="kpi-etiqueta">Impacto muy alto</span>
+          <span class="kpi-valor mono">—</span>
+          <span class="kpi-delta"></span>
+        </div>
+        <div class="kpi" id="kpi-sentimiento">
+          <span class="kpi-etiqueta">Tono medio</span>
+          <span class="kpi-valor mono">—</span>
+          <span class="kpi-delta"></span>
+        </div>
+      </div>
+
+      <div class="acciones">
+        <div class="reloj">
+          Próximo corte 07:00
+          <b id="cuenta-regresiva">—</b>
+        </div>
+        <button type="button" id="btn-actualizar">
+          <span class="disco" aria-hidden="true"></span>
+          <span class="etiqueta">Actualizar ahora</span>
+        </button>
+        <button type="button" class="btn-icono" id="btn-tema" aria-label="Cambiar entre modo oscuro y claro">◑</button>
+      </div>
+    </div>
+
+    <div id="barra-progreso"></div>
+    <div id="progreso-detalle" class="tenue" style="padding:0 26px 6px"></div>
+  </header>
+
+  <div class="franja" aria-label="Titulares de mayor impacto">
+    <div class="franja-pista"><div id="franja-titulares"></div></div>
+  </div>
+
+  <div id="avisos" role="status" aria-live="polite"></div>
+
+  <main>
+    <section class="modulo" id="m1">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">01</span>
+        <div>
+          <h2>Resumen ejecutivo del día</h2>
+          <p>Los diez despachos de mayor impacto, ordenados por un puntaje que combina peso de la fuente, relevancia del actor, severidad del tema, corroboración entre medios y recencia.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m2">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">02</span>
+        <div>
+          <h2>Radar presidencial</h2>
+          <p>Presencia diaria del Ejecutivo y las carteras ministeriales, con variación frente al día anterior y ritmo de actividad por franja horaria.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m3">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">03</span>
+        <div>
+          <h2>Congreso</h2>
+          <p>Trámite legislativo detectado en los despachos: radicación, ponencia, comisiones, plenaria y desenlace. El semáforo señala qué avanza, qué se traba y qué se hunde.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m4">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">04</span>
+        <div>
+          <h2>Partidos políticos</h2>
+          <p>Cuota de conversación, crecimiento semanal y tono medio de cada colectividad.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m5">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">05</span>
+        <div>
+          <h2>Bogotá</h2>
+          <p>Alcaldía, Concejo y los seis ejes del Distrito que concentran la atención: movilidad, seguridad, economía, proyectos, cabildo y servicios.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m6">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">06</span>
+        <div>
+          <h2>Análisis de sentimiento</h2>
+          <p>Léxico en español con tratamiento de negación e intensificadores, aplicado por actor, partido, entidad y tema.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m7">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">07</span>
+        <div>
+          <h2>Tendencias sociales</h2>
+          <p>Términos que se aceleran, actores más citados y señales de crisis, escándalo, reforma o debate.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m8">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">08</span>
+        <div>
+          <h2>Nube de palabras</h2>
+          <p>Vocabulario dominante en tres ventanas de tiempo.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m9">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">09</span>
+        <div>
+          <h2>Mapa de actores</h2>
+          <p>Red de coincidencias: quién aparece con quién, con qué partido, en qué entidad y alrededor de qué tema.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m10">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">10</span>
+        <div>
+          <h2>Alertas tempranas</h2>
+          <p>Señales de corrupción, investigaciones, choques institucionales y cambios normativos, con semáforo verde, amarillo y rojo.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m11">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">11</span>
+        <div>
+          <h2>Base histórica</h2>
+          <p>Comparación entre hoy, la última semana, el último mes y el último año, con detección de días anómalos. La base se construye sola en su navegador y en el repositorio.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+
+    <section class="modulo" id="m12">
+      <div class="modulo-cabeza">
+        <span class="modulo-numero">12</span>
+        <div>
+          <h2>Lectura estratégica</h2>
+          <p>Riesgos, oportunidades, escenarios e impacto por ámbito, derivados por reglas explícitas de los indicadores medidos.</p>
+        </div>
+      </div>
+      <div class="modulo-cuerpo"></div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <p>Este tablero no aloja contenido de terceros: guarda titular, enlace y metadatos, y enlaza siempre a la publicación original. Respete los términos de uso de cada fuente antes de darle un uso comercial.</p>
+    <p id="pie-tecnico"></p>
+  </footer>
+</div>
+
+<!-- ============ AJUSTES ============ -->
+<dialog id="ajustes">
+  <div class="dlg-cabeza">
+    <h3>Fuentes y ajustes</h3>
+    <button class="btn-icono" id="cerrar-ajustes" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="dlg-cuerpo">
+    <div class="campo interruptor">
+      <input type="checkbox" id="modo-directo">
+      <label for="modo-directo">Leer las fuentes en directo desde el navegador
+        <span class="ayuda">Sin marcar, el tablero usa <code>data/latest.json</code>, que el recolector escribe cada día a las 07:00 leyendo las fuentes desde el servidor. Marcado, el navegador pide los RSS a través de un proxy: más inmediato, pero sujeto a límites del proxy.</span>
+      </label>
+    </div>
+
+    <div class="campo">
+      <label for="sel-proxy">Proxy para la lectura directa</label>
+      <select id="sel-proxy"></select>
+      <div class="ayuda">Los proxies públicos limitan peticiones. Para uso serio, despliegue el Cloudflare Worker que viene en <code>docs/DESPLIEGUE.md</code> y péguelo abajo.</div>
+    </div>
+
+    <div class="campo">
+      <label for="proxy-propio">Dirección del proxy propio</label>
+      <input type="text" id="proxy-propio" placeholder="https://mi-worker.workers.dev/?url={url}">
+      <div class="ayuda">Debe contener <code>{url}</code> donde va la dirección del feed.</div>
+    </div>
+
+    <div class="campo">
+      <label>Fuentes configuradas</label>
+      <div id="lista-fuentes" class="salud"></div>
+    </div>
+
+    <div class="campo">
+      <label>Base local</label>
+      <div class="ayuda" id="info-base"></div>
+    </div>
+  </div>
+  <div class="dlg-pie">
+    <button type="button" id="btn-vaciar">Vaciar base local</button>
+    <button type="button" class="primario" id="btn-guardar-ajustes">Guardar</button>
+  </div>
+</dialog>
+
+<!-- ============ BIBLIOTECAS ============ -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts-wordcloud@2.1.0/dist/echarts-wordcloud.min.js" onerror="window.CIP_SIN_NUBE=true"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js" charset="utf-8"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+<!-- ============ APLICACIÓN ============ -->
+<script src="assets/js/config/sources.js"></script>
+<script src="assets/js/core/nlp.js"></script>
+<script src="assets/js/core/store.js"></script>
+<script src="assets/js/core/fetcher.js"></script>
+<script src="assets/js/core/scheduler.js"></script>
+<script src="assets/js/core/ui.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/modules/panorama.js"></script>
+<script src="assets/js/modules/institucional.js"></script>
+<script src="assets/js/modules/percepcion.js"></script>
+<script src="assets/js/modules/estrategia.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
