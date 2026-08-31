@@ -78,7 +78,7 @@ Debajo corre la franja de titulares, ordenada por impacto. Pase el cursor y se d
 
 ---
 
-## 4. Los doce módulos
+## 4. Los trece módulos
 
 ### 01 · Resumen ejecutivo del día
 Los diez despachos de mayor impacto. Cada uno trae su nivel (Muy Alto a Bajo), su
@@ -162,6 +162,23 @@ indicadores medidos. **Cada afirmación enlaza los despachos que la sustentan.**
 
 No consulta ningún modelo de lenguaje. Si dice «riesgo alto en el frente judicial», es
 porque hay N piezas con alerta roja y tema judicial en la ventana, y puede abrirlas.
+
+### 13 · Cronología por horas
+Lo mismo que ve el módulo 1, pero ordenado por reloj en vez de por peso: del despacho
+más reciente al más antiguo, agrupado por hora, con el volumen, el tono medio y la
+composición por nivel de impacto de cada hora.
+
+Sirve para una pregunta que el orden por impacto no responde: **qué acaba de pasar.**
+Una noticia menor publicada hace diez minutos puede ser la primera señal de algo que
+mañana encabezará el módulo 1, y en un ranking por relevancia queda enterrada.
+
+Las cuatro cifras de arriba responden de un vistazo si la jornada se está acelerando:
+última publicación, hora más activa, despachos de las últimas tres horas frente a las
+tres previas, y ritmo medio de la ventana. Las ventanas son 24 horas, 48 horas y 7 días.
+
+Las horas son las del reloj de su computador, no las del servidor. Las horas sin nada
+publicado se dibujan vacías a propósito: un silencio de tres horas en la prensa
+política es un dato, no un hueco que convenga disimular.
 
 ---
 

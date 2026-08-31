@@ -52,7 +52,7 @@ Todo el análisis ocurre en su navegador, sobre el texto que devuelven las fuent
 El puntaje de impacto es auditable: pase el cursor sobre la barra de cualquier
 despacho del módulo 1 y verá los cinco componentes que lo produjeron.
 
-## Los doce módulos
+## Los trece módulos
 
 | | Módulo | Responde a |
 |---|---|---|
@@ -68,6 +68,7 @@ despacho del módulo 1 y verá los cinco componentes que lo produjeron.
 | 10 | Alertas tempranas | Qué exige atención hoy |
 | 11 | Base histórica | Cómo se compara con la semana, el mes y el año |
 | 12 | Lectura estratégica | Riesgos, oportunidades y escenarios |
+| 13 | Cronología por horas | Qué acaba de pasar, del más reciente al más antiguo |
 
 El módulo 12 no consulta ningún modelo de lenguaje. Aplica reglas explícitas sobre
 los indicadores medidos y cada afirmación enlaza los despachos que la sustentan.
@@ -90,6 +91,7 @@ los indicadores medidos y cada afirmación enlaza los despachos que la sustentan
 │       ├── modules/institucional.js    módulos 3–5
 │       ├── modules/percepcion.js       módulos 6–8
 │       ├── modules/estrategia.js       módulos 9–12
+│       ├── modules/cronologia.js      módulo 13
 │       ├── app.js                 ciclo de actualización y estado
 │       └── main.js                arranque y controles
 ├── collector/collect.js           recolector Node, sin dependencias
