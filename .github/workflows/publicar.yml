@@ -29,6 +29,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # El navegador guarda los .js y .css en caché y se queda con la copia
+      # vieja tras un despliegue. Sellamos las rutas con la huella de los
+      # propios archivos: cambia cuando cambia el código, y solo entonces.
+      - name: Sellar los assets contra la caché del navegador
+        run: |
+          sello=$(find assets -type f \( -name '*.js' -o -name '*.css' \) \
+                  | sort | xargs cat | md5sum | cut -c1-8)
+          sed -i "s/?v=dev/?v=$sello/g" index.html
+          echo "Assets sellados con ?v=$sello"
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
