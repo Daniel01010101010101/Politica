@@ -3,9 +3,9 @@
    -------------------------------------------------------------------
    Dos relojes independientes, por diseño:
 
-   1. Servidor (GitHub Actions, cron 0 * * * * UTC = cada hora en punto,
-      también en Bogotá). Corre aunque nadie tenga el tablero abierto.
-      Es el reloj real.
+   1. Servidor (GitHub Actions, cron 17,47 * * * * UTC = dos citas por
+      hora, a y media, también en Bogotá). Corre aunque nadie tenga el
+      tablero abierto. Es el reloj real.
 
    2. Navegador (este archivo). Cuando la pestaña está abierta, relee al
       cumplirse cada intervalo (`programacion.intervaloMinutos`) y también

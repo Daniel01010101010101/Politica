@@ -24,11 +24,11 @@ Esto es lo que ocurre cada hora, sin que nadie toque nada:
 
 | Minuto (Bogotá) | Qué pasa |
 |---|---|
-| :00 | GitHub arranca el flujo «Recolector horario» |
-| :00–:02 | Un servidor de GitHub lee las 24 fuentes en lotes de 6 |
-| :02 | Normaliza, deduplica y guarda `data/latest.json` más el archivo del día en `data/history/`, que se reescribe con todo lo publicado en la jornada |
-| :02 | Ese commit dispara «Publicar en GitHub Pages» |
-| :04 | El sitio queda actualizado |
+| :17 y :47 | GitHub arranca el flujo «Recolector horario» |
+| +2 min | Un servidor de GitHub lee las 24 fuentes en lotes de 6 |
+| +2 min | Normaliza, deduplica y guarda `data/latest.json` más el archivo del día en `data/history/`, que se reescribe con todo lo publicado en la jornada |
+| +2 min | Ese commit dispara «Publicar en GitHub Pages» |
+| +4 min | El sitio queda actualizado |
 
 El tablero abierto en el navegador sigue el mismo reloj: al llegar la hora en punto
 relee la instantánea, y también lo hace al volver a la pestaña si se pasó un corte.
@@ -37,9 +37,11 @@ Cuando usted abre el tablero, su navegador descarga ese archivo y hace **todo el
 análisis localmente**: sentimiento, actores, temas, impacto, alertas, agrupaciones. Por
 eso carga rápido y por eso funciona igual con o sin conexión una vez cargado.
 
-El cron está en `0 * * * *` UTC. Colombia no cambia de hora, así que las horas en punto
-de UTC son horas en punto en Bogotá. GitHub puede demorarse unos minutos en horas de
-alta carga; no es un fallo.
+El cron está en `17,47 * * * *` UTC. Colombia no cambia de hora, así que son los mismos
+minutos en Bogotá. Son dos citas y ninguna en punto a propósito: los cron de GitHub se
+retrasan —y a veces se saltan una cita entera— sobre todo en el minuto `:00`, que es el
+más congestionado. Con dos citas, si una se pierde, la siguiente recoge. Nada de eso es
+un fallo del tablero, y el botón «Actualizar ahora» no depende del cron.
 
 El **parte del día** —las comparaciones del módulo 11— sigue anclado a la jornada de
 Bogotá: las lecturas de la noche alimentan el archivo del día correcto, no el del día

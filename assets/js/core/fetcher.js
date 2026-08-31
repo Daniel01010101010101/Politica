@@ -4,7 +4,7 @@
    Dos rutas, en este orden:
 
    A) data/latest.json  — lo produce el recolector (GitHub Actions)
-      cada hora en punto, leyendo las fuentes originales desde el
+      dos veces por hora, leyendo las fuentes originales desde el
       servidor. Es la ruta recomendada: sin CORS, sin límites.
 
    B) Lectura directa — el navegador pide los RSS a través de un proxy

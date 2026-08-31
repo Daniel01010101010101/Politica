@@ -1,11 +1,15 @@
 name: Recolector horario
 
-# Cada hora en punto (UTC). Bogotá es UTC-5 sin horario de verano, así que
-# «en punto» en UTC también cae en punto en Bogotá.
-# GitHub puede demorar el cron unos minutos en horas de alta carga.
+# Dos citas por hora, a los minutos :17 y :47 (UTC; Bogotá es UTC-5 fijo,
+# así que son los mismos minutos allá).
+#
+# Por qué no en punto: el minuto :00 es el más congestionado de GitHub y sus
+# cron se retrasan o se saltan ahí. Y por qué dos: si una cita se pierde, la
+# siguiente recoge media hora después. Una corrida sin novedades no escribe
+# nada, así que la segunda cita no cuesta más que unos segundos de máquina.
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '17,47 * * * *'
   workflow_dispatch:        # botón «Run workflow» para forzar una corrida
 
 permissions:

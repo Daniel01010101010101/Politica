@@ -2,7 +2,7 @@
 /* ===================================================================
    Recolector — Centro de Inteligencia Política
    -------------------------------------------------------------------
-   Corre en el servidor (GitHub Actions) cada hora en punto. Lee las
+   Corre en el servidor (GitHub Actions) dos veces por hora. Lee las
    fuentes originales, normaliza y escribe:
 
      data/latest.json           instantánea que consume el tablero

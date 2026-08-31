@@ -27,10 +27,15 @@ publicar los datos.
 Luego, en **Actions → Recolector horario → Run workflow**, lance una corrida manual
 para llenar `data/latest.json` de entrada. A partir de ahí corre solo.
 
-> El cron está en `0 * * * *` (UTC): una lectura cada hora en punto. Como Colombia no
-> cambia de hora, esas horas en punto también lo son en Bogotá. Si cambia la frecuencia,
+> El cron está en `17,47 * * * *` (UTC): dos lecturas por hora. Como Colombia no cambia
+> de hora, esos minutos también lo son en Bogotá. No están en punto a propósito: `:00`
+> es el minuto más congestionado de GitHub y es donde más se retrasan y se saltan los
+> cron; con dos citas, si una se pierde, la siguiente recoge. Si cambia la frecuencia,
 > mueva las dos piezas a la vez: el `cron` del flujo y `programacion.intervaloMinutos`
 > en `sources.js`, que es lo que el tablero usa para su cuenta regresiva.
+>
+> La primera cita de un cron recién creado suele saltarse: GitHub tarda en registrarlo.
+> Use **Run workflow** para la primera lectura y deje que el cron entre solo.
 >
 > Veinticuatro corridas diarias caben de sobra en la cuota de Actions de un repositorio
 > público (son gratuitas) y cada una tarda menos de dos minutos. En un repositorio
