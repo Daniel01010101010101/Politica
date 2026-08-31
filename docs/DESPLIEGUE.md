@@ -45,6 +45,38 @@ para llenar `data/latest.json` de entrada. A partir de ahí corre solo.
 GitHub desactiva los cron de los repositorios sin actividad por 60 días. Un *commit*
 cualquiera los reactiva.
 
+### Si el cron no dispara
+
+Es lo más común al empezar: el flujo está bien y aun así pasan varias citas sin que
+GitHub ejecute nada. El `schedule` es el único programador que trae GitHub, así que
+la cuestión no es sustituirlo sino desatascarlo.
+
+Antes de tocar nada, descarte las causas reales. En **Actions → Recolector horario**,
+filtre por `event: schedule`; si no hay ninguna corrida, compruebe:
+
+| Qué mirar | Dónde | Qué debe ver |
+|---|---|---|
+| Que no sea un *fork* | Portada del repositorio | Sin la línea «forked from…»: GitHub no programa cron en forks |
+| Que Actions esté activo | Settings → Actions → General | «Allow all actions» |
+| Que el flujo no esté desactivado | Actions → Recolector horario | Sin el aviso «This workflow was disabled» |
+| Que el cron esté en la rama por defecto | El archivo en `main` | El `schedule` solo se lee desde ahí |
+| Minutos disponibles | Settings → Billing | En repositorio público, ilimitados |
+| Permisos de escritura | Settings → Actions → General | Read and write permissions |
+
+Si todo lo anterior está en orden, quedan dos palancas, en este orden:
+
+1. **Apagar y encender el flujo.** En **Actions → Recolector horario → ⋯ → Disable
+   workflow**, y acto seguido **Enable workflow**. Eso obliga a GitHub a registrar
+   de nuevo el `schedule`, y es lo que desatasca la mayoría de los casos en que el
+   programador se quedó dormido.
+2. **Esperar.** GitHub no garantiza la puntualidad de las citas y tarda especialmente
+   en tomarse en serio los cron de un repositorio recién despertado tras meses
+   inactivo. Puede tardar horas. Mientras tanto, **Run workflow** llena los datos y
+   el botón «Actualizar ahora» del tablero no depende del cron para nada.
+
+Para no enterarse por casualidad: si pasan tres lecturas sin datos nuevos, el sello de
+la esquina inferior izquierda del tablero se pone ámbar y lo dice.
+
 ## 3. Conectar la API de X (opcional)
 
 En **Settings → Secrets and variables → Actions → New repository secret**:
