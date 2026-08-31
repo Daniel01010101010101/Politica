@@ -37,11 +37,7 @@
   setInterval(function () {
     const c = $('#cuenta-regresiva');
     if (c) c.textContent = CIP_SCHED.cuentaRegresiva();
-    const s = $('#sello-actualizacion');
-    if (s && CIP.estado.generado) {
-      const origen = CIP.estado.origen === 'directo' ? 'lectura directa' : 'recolector horario';
-      s.innerHTML = 'Actualizado ' + CIP.hace(CIP.estado.generado) + ' <span class="tenue">· ' + origen + '</span>';
-    }
+    UI.pintarSello();
   }, 1000);
 
   /* ---- panel de ajustes ---- */

@@ -66,6 +66,35 @@ window.UI = (function () {
     return Object.assign(base, extra);
   }
 
+  /* ---------- sello de frescura ----------
+     Si el recolector deja de escribir, el tablero sigue pintando datos
+     viejos sin decirlo. Tres lecturas perdidas seguidas ya no son un
+     retraso del programador: es que la cadena se rompió, y hay que
+     verlo sin tener que ir a mirar los registros de GitHub. */
+  function pintarSello() {
+    const sello = $('#sello-actualizacion');
+    if (!sello) return;
+    const e = CIP.estado;
+    if (!e.generado) {
+      sello.dataset.estado = 'vacio';
+      sello.textContent = 'Sin lectura';
+      return;
+    }
+    const intervalo = (window.CIP_SOURCES.programacion.intervaloMinutos || 60) * 60000;
+    const edad = Date.now() - e.generado;
+    const vencido = edad > 3 * intervalo;
+    const origen = e.origen === 'directo' ? 'lectura directa' :
+                   e.origen === 'recolector' ? 'recolector horario' : 'instantánea';
+
+    sello.dataset.estado = vencido ? 'viejo' : 'ok';
+    sello.innerHTML = 'Actualizado ' + CIP.hace(e.generado) +
+      ' <span class="tenue">· ' + origen + '</span>' +
+      (vencido
+        ? '<span class="sello-aviso">Sin lectura nueva en ' +
+          Math.floor(edad / 3600000) + ' h · revise el disparador</span>'
+        : '');
+  }
+
   /* ---------- estados ---------- */
   function estadoCarga(activo, motivo) {
     const barra = $('#barra-progreso');
@@ -145,14 +174,7 @@ window.UI = (function () {
         sent > 0.12 ? 'tono favorable' : sent < -0.12 ? 'tono adverso' : 'tono neutro',
         sent > 0.12 ? 'alza' : sent < -0.12 ? 'baja' : 'neutro');
 
-    const sello = $('#sello-actualizacion');
-    if (sello) {
-      const origen = e.origen === 'directo' ? 'lectura directa' :
-                     e.origen === 'recolector' ? 'recolector horario' : 'instantánea';
-      sello.innerHTML = e.generado
-        ? 'Actualizado ' + CIP.hace(e.generado) + ' <span class="tenue">· ' + origen + '</span>'
-        : 'Sin lectura';
-    }
+    pintarSello();
 
     const cuenta = $('#cuenta-regresiva');
     if (cuenta) cuenta.textContent = window.CIP_SCHED.cuentaRegresiva();
@@ -221,6 +243,7 @@ window.UI = (function () {
     registrar: registrar, grafico: grafico, fundirOpciones: fundirOpciones, paleta: paleta,
     ejeBase: ejeBase, estadoCarga: estadoCarga, progreso: progreso, aviso: aviso, vacio: vacio,
     renderTodo: renderTodo, renderCabecera: renderCabecera, activarNavegacion: activarNavegacion,
+    pintarSello: pintarSello,
     $: $, $$: $$
   };
 })();

@@ -33,6 +33,16 @@ llegar la hora en punto y también al volver a la pestaña si entre tanto se pas
 corte. El botón **Actualizar ahora** fuerza el ciclo completo en cualquier momento,
 use la ruta que use.
 
+**Si el cron de GitHub no arranca**, y es frecuente que no lo haga durante las
+primeras horas o días de un repositorio, monte el disparador externo de
+`docs/DISPARADOR-EXTERNO.md`: un servicio de cron ajeno a GitHub le ordena al
+recolector que corra, por API. Cinco minutos de configuración y deja de depender
+del programador de GitHub.
+
+Cuando la cadena se rompe, el tablero lo dice: si pasan tres lecturas sin datos
+nuevos, el sello de la esquina inferior izquierda se pone ámbar y avisa. No hay
+que ir a mirar los registros para enterarse.
+
 El «parte del día» del módulo 11 sigue anclado a la jornada de Bogotá: las lecturas
 nocturnas suman al archivo del día correcto, no al del día siguiente en UTC.
 
@@ -95,6 +105,9 @@ los indicadores medidos y cada afirmación enlaza los despachos que la sustentan
 │       ├── app.js                 ciclo de actualización y estado
 │       └── main.js                arranque y controles
 ├── collector/collect.js           recolector Node, sin dependencias
+├── disparador/
+│   ├── disparar.sh                orden de recolección por API, solo curl
+│   └── apps-script.gs             la misma orden, desde Google Apps Script
 ├── data/
 │   ├── latest.json                instantánea vigente
 │   └── history/AAAA-MM-DD.json    archivo diario
@@ -103,6 +116,7 @@ los indicadores medidos y cada afirmación enlaza los despachos que la sustentan
 │   └── publicar.yml               publicación en Pages
 └── docs/
     ├── DESPLIEGUE.md
+    ├── DISPARADOR-EXTERNO.md
     └── FUENTES.md
 ```
 

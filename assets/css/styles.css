@@ -508,6 +508,9 @@ dialog#ajustes::backdrop { background: rgba(10,8,9,.68); backdrop-filter: blur(3
 
 #abrir-rail { display: none; }
 
+#sello-actualizacion[data-estado="viejo"] { color: var(--naranja); }
+.sello-aviso { display: block; margin-top: 2px; font-size: 10.5px; color: var(--naranja); }
+
 /* ---------------- M13 ---------------- */
 .crono-cifras {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;
