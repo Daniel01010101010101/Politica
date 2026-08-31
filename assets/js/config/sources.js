@@ -250,9 +250,9 @@
        3. PARTIDOS
        -------------------------------------------------------------- */
     partidos: [
-      { id: 'pacto', nombre: 'Pacto Histórico', color: '#8B0000', alias: ['pacto historico', 'polo democratico', 'union patriotica', 'colombia humana', 'progresistas'] },
+      { id: 'pacto', nombre: 'Pacto Histórico', color: '#8E378E', alias: ['pacto historico', 'polo democratico', 'union patriotica', 'colombia humana', 'progresistas'] },
       { id: 'centro-democratico', nombre: 'Centro Democrático', color: '#1F4E79', alias: ['centro democratico', 'uribismo'] },
-      { id: 'liberal', nombre: 'Partido Liberal', color: '#C62828', alias: ['partido liberal', 'liberalismo'] },
+      { id: 'liberal', nombre: 'Partido Liberal', color: '#921B4C', alias: ['partido liberal', 'liberalismo'] },
       { id: 'cambio-radical', nombre: 'Cambio Radical', color: '#B8860B', alias: ['cambio radical'] },
       { id: 'conservador', nombre: 'Partido Conservador', color: '#2E6B4F', alias: ['partido conservador', 'conservatismo'] },
       { id: 'verde', nombre: 'Alianza Verde', color: '#4C8C2B', alias: ['alianza verde', 'partido verde'] },

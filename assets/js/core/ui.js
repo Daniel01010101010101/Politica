@@ -25,9 +25,16 @@ window.UI = (function () {
   }
 
   const paleta = {
-    carmin: '#8B0000', ladrillo: '#B22222', rojo: '#C62828', arcilla: '#E06A5A',
-    pizarra: '#5B6472', hueso: '#C9C3B8', verde: '#2E7D5B', ambar: '#C89211',
-    azul: '#3A6EA5', violeta: '#6A4C93'
+    // Marca
+    morado: '#8E378E', moradoClaro: '#B565B5', moradoHondo: '#6B2A6B', magenta: '#921B4C',
+    // Señal
+    rojo: '#E92025', naranja: '#F49A20', verde: '#35A74A', azul: '#6171C7',
+    azulHondo: '#2A3883',
+    // Neutros para series sin carga semántica
+    pizarra: '#5B6472', hueso: '#C9C3B8',
+    // Alias heredados
+    carmin: '#8E378E', ladrillo: '#6B2A6B', arcilla: '#B565B5', ambar: '#F49A20',
+    violeta: '#8E378E'
   };
 
   function ejeBase() {
