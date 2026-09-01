@@ -14,12 +14,11 @@ de los feeds y las APIs que aparecen en `assets/js/config/sources.js`.
 El sistema tiene dos rutas, y usa la primera que funcione.
 
 **Ruta A — recolector en el servidor (la recomendada).**
-Una acción de GitHub corre `collector/collect.js` cuatro veces por hora, en los
-minutos :05, :20, :35 y :50 (`5,20,35,50 * * * *` en UTC; como Colombia no cambia de
-hora, son los mismos minutos en Bogotá). Ninguna cita en punto, porque `:00` es el
-minuto más congestionado de GitHub y donde más se retrasan y se saltan los cron; y
-cuatro en vez de una porque GitHub no garantiza ninguna cita, y perder cuatro
-seguidas es mucho menos probable que perder una. El script lee cada fuente, normaliza, deduplica y escribe `data/latest.json` más el
+Una acción de GitHub corre `collector/collect.js` a los minutos :17 y :47
+(`17,47 * * * *` en UTC; como Colombia no cambia de hora, son los mismos minutos en
+Bogotá). Dos citas por hora, y fuera del minuto en punto, porque los cron de GitHub
+se retrasan o se saltan en `:00`, que es su minuto más congestionado: si una cita se
+pierde, la siguiente recoge. El script lee cada fuente, normaliza, deduplica y escribe `data/latest.json` más el
 archivo del día en `data/history/` —que se reescribe en cada pasada con todo lo
 publicado en la jornada—. Después hace *commit*. El navegador solo lee ese JSON: no
 hay CORS, no hay límites de proxy y funciona aunque nadie tenga el tablero abierto.
@@ -108,7 +107,7 @@ los indicadores medidos y cada afirmación enlaza los despachos que la sustentan
 │   ├── latest.json                instantánea vigente
 │   └── history/AAAA-MM-DD.json    archivo diario
 ├── .github/workflows/
-│   ├── recoleccion.yml            cron a los minutos :05, :20, :35 y :50
+│   ├── recolector.yml             cron a los minutos :17 y :47
 │   └── publicar.yml               publicación en Pages
 └── docs/
     ├── DESPLIEGUE.md
@@ -137,9 +136,9 @@ Todo se toca en un solo archivo: `assets/js/config/sources.js`.
 - **Vigilar a alguien**: añádalo a `actores` con sus alias y un peso de relevancia.
 - **Vigilar un asunto**: añádalo a `temas` con las palabras que lo delatan.
 - **Cambiar la frecuencia**: `programacion.intervaloMinutos` (cada cuánto relee el
-  navegador) y el `cron` de `.github/workflows/recoleccion.yml` (cada cuánto lee el
+  navegador) y el `cron` de `.github/workflows/recolector.yml` (cada cuánto lee el
   servidor; va en UTC). Para leer cada dos horas: `intervaloMinutos: 120` y
-  `cron: '5 */2 * * *'`. Evite el minuto `:00`: es donde más se retrasan los cron
+  `cron: '17 */2 * * *'`. Evite el minuto `:00`: es donde más se retrasan los cron
   de GitHub.
 - **Cambiar la hora del parte del día**: `programacion.horaDiaria`, que solo ancla las
   comparaciones históricas del módulo 11.
@@ -165,10 +164,9 @@ Los umbrales viven en `core/nlp.js`:
 - **El sentimiento por léxico no entiende ironía.** Sirve para ver tendencias
   agregadas, no para juzgar un titular suelto.
 - **El cron de GitHub no es puntual ni garantizado.** Puede demorarse minutos y puede
-  saltarse una cita entera, sobre todo en un repositorio recién despertado tras meses
-  inactivo. Por eso hay cuatro citas por hora y ninguna en `:00`: si una se pierde, la
-  siguiente recoge quince minutos después. Si aun así no dispara ninguna, `docs/
-  DESPLIEGUE.md` explica cómo forzar un registro nuevo del programador.
+  saltarse una cita entera, sobre todo recién creado el repositorio o en el minuto en
+  punto. Por eso hay dos citas por hora y fuera de `:00`. Si una se pierde, la
+  siguiente recoge media hora después.
 - **Veinticuatro corridas diarias** son gratuitas en un repositorio público. En uno
   privado consumen minutos de Actions: allí conviene bajar la frecuencia a dos o tres
   horas.

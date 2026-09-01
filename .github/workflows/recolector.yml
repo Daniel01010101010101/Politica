@@ -1,23 +1,15 @@
 name: Recolector horario
 
-# Cuatro citas por hora, en los minutos :05, :20, :35 y :50 (UTC; Bogotá es
-# UTC-5 fijo, así que son los mismos minutos allá).
+# Dos citas por hora, a los minutos :17 y :47 (UTC; Bogotá es UTC-5 fijo,
+# así que son los mismos minutos allá).
 #
-# Por qué así, y no una cita en punto:
-#   · El minuto :00 es el más congestionado de GitHub. Sus cron se retrasan
-#     ahí y a veces se saltan la cita entera.
-#   · GitHub no garantiza ninguna cita. Con cuatro oportunidades por hora,
-#     que se pierdan tres seguidas es mucho menos probable que perder una.
-#   · Una corrida sin novedades no escribe ningún commit y dura segundos,
-#     así que las citas de más no cuestan nada en un repositorio público.
-#
-# Este archivo sustituye a recolector.yml. El cambio de nombre no es
-# cosmético: obliga a GitHub a registrar el «schedule» como un flujo nuevo,
-# que es lo que se hace cuando su programador se queda dormido y ni siquiera
-# apagar y encender el flujo lo despierta.
+# Por qué no en punto: el minuto :00 es el más congestionado de GitHub y sus
+# cron se retrasan o se saltan ahí. Y por qué dos: si una cita se pierde, la
+# siguiente recoge media hora después. Una corrida sin novedades no escribe
+# nada, así que la segunda cita no cuesta más que unos segundos de máquina.
 on:
   schedule:
-    - cron: '5,20,35,50 * * * *'
+    - cron: '17,47 * * * *'
   workflow_dispatch:        # botón «Run workflow» para forzar una corrida
 
 permissions:
