@@ -69,10 +69,22 @@ Si todo lo anterior está en orden, quedan dos palancas, en este orden:
    workflow**, y acto seguido **Enable workflow**. Eso obliga a GitHub a registrar
    de nuevo el `schedule`, y es lo que desatasca la mayoría de los casos en que el
    programador se quedó dormido.
-2. **Esperar.** GitHub no garantiza la puntualidad de las citas y tarda especialmente
+2. **Recrear el flujo con otro nombre de archivo**, copiando el contenido a
+   `.github/workflows/otro-nombre.yml` y borrando el anterior en el mismo *commit*.
+   GitHub identifica los flujos por ruta, así que lo trata como uno nuevo y registra
+   el `schedule` desde cero. Conserve el mismo `name:` o `publicar.yml` dejará de
+   republicar el sitio, porque engancha por nombre. **Antes de hacerlo, compruebe que
+   el cron sigue sin disparar**: si ya despertó, recrear el flujo tira por la borda el
+   registro que acaba de funcionar.
+3. **Esperar.** GitHub no garantiza la puntualidad de las citas y tarda especialmente
    en tomarse en serio los cron de un repositorio recién despertado tras meses
    inactivo. Puede tardar horas. Mientras tanto, **Run workflow** llena los datos y
    el botón «Actualizar ahora» del tablero no depende del cron para nada.
+
+> **Lo que pasó en este repositorio.** Seis citas seguidas sin disparar. Apagar y
+> encender el flujo lo resolvió, pero no de inmediato: la primera corrida programada
+> llegó unos treinta y cinco minutos después, dos ciclos más tarde. Si aplica el
+> remedio 1, dele al menos dos citas de margen antes de concluir que no funcionó.
 
 Para no enterarse por casualidad: si pasan tres lecturas sin datos nuevos, el sello de
 la esquina inferior izquierda del tablero se pone ámbar y lo dice.
