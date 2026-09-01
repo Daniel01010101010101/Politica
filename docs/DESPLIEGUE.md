@@ -27,20 +27,22 @@ publicar los datos.
 Luego, en **Actions → Recolector horario → Run workflow**, lance una corrida manual
 para llenar `data/latest.json` de entrada. A partir de ahí corre solo.
 
-> El cron está en `17,47 * * * *` (UTC): dos lecturas por hora. Como Colombia no cambia
-> de hora, esos minutos también lo son en Bogotá. No están en punto a propósito: `:00`
-> es el minuto más congestionado de GitHub y es donde más se retrasan y se saltan los
-> cron; con dos citas, si una se pierde, la siguiente recoge. Si cambia la frecuencia,
+> El cron está en `5,20,35,50 * * * *` (UTC): cuatro lecturas por hora. Como Colombia
+> no cambia de hora, esos minutos también lo son en Bogotá. Ninguna en punto a
+> propósito: `:00` es el minuto más congestionado de GitHub y es donde más se retrasan
+> y se saltan los cron; con cuatro citas, si una se pierde, la siguiente recoge quince
+> minutos después. Si cambia la frecuencia,
 > mueva las dos piezas a la vez: el `cron` del flujo y `programacion.intervaloMinutos`
 > en `sources.js`, que es lo que el tablero usa para su cuenta regresiva.
 >
 > La primera cita de un cron recién creado suele saltarse: GitHub tarda en registrarlo.
 > Use **Run workflow** para la primera lectura y deje que el cron entre solo.
 >
-> Veinticuatro corridas diarias caben de sobra en la cuota de Actions de un repositorio
-> público (son gratuitas) y cada una tarda menos de dos minutos. En un repositorio
-> privado sí consumen minutos: ahí conviene subir `intervaloMinutos` a 120 o 180 y
-> ajustar el cron a `0 */2 * * *`.
+> Noventa y seis corridas diarias caben de sobra en la cuota de Actions de un
+> repositorio público (son gratuitas) y cada una tarda menos de dos minutos; las que no
+> encuentran novedades duran segundos y no escriben nada. En un repositorio privado sí
+> consumen minutos: ahí conviene subir `intervaloMinutos` a 120 o 180 y ajustar el cron
+> a `5 */2 * * *`.
 
 GitHub desactiva los cron de los repositorios sin actividad por 60 días. Un *commit*
 cualquiera los reactiva.
@@ -67,9 +69,16 @@ Si todo lo anterior está en orden, quedan dos palancas, en este orden:
 
 1. **Apagar y encender el flujo.** En **Actions → Recolector horario → ⋯ → Disable
    workflow**, y acto seguido **Enable workflow**. Eso obliga a GitHub a registrar
-   de nuevo el `schedule`, y es lo que desatasca la mayoría de los casos en que el
-   programador se quedó dormido.
-2. **Esperar.** GitHub no garantiza la puntualidad de las citas y tarda especialmente
+   de nuevo el `schedule`, y desatasca buena parte de los casos en que el programador
+   se quedó dormido.
+2. **Recrear el flujo con otro nombre de archivo.** Copie el contenido a
+   `.github/workflows/otro-nombre.yml` y borre el anterior en el mismo *commit*.
+   GitHub lo trata como un flujo nuevo, con otro identificador interno, y registra el
+   `schedule` desde cero. Es más contundente que apagar y encender, y es lo que se
+   hizo aquí al pasar de `recolector.yml` a `recoleccion.yml`. Conserve el mismo
+   `name:` del flujo o `publicar.yml` dejará de republicar el sitio, porque engancha
+   por nombre.
+3. **Esperar.** GitHub no garantiza la puntualidad de las citas y tarda especialmente
    en tomarse en serio los cron de un repositorio recién despertado tras meses
    inactivo. Puede tardar horas. Mientras tanto, **Run workflow** llena los datos y
    el botón «Actualizar ahora» del tablero no depende del cron para nada.

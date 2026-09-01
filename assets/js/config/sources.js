@@ -329,7 +329,7 @@
       intervaloMinutos: 60,   // cada cuánto vuelve a leer las fuentes
       horaDiaria: '07:00',    // ancla del «parte del día» para el módulo 11
       zonaHoraria: 'America/Bogota',
-      utcCron: '17,47 * * * *' // dos citas por hora, fuera del minuto en punto
+      utcCron: '5,20,35,50 * * * *' // cuatro citas por hora, ninguna en punto
     },
 
     /* --------------------------------------------------------------
