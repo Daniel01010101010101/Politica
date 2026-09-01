@@ -82,9 +82,11 @@ Si todo lo anterior está en orden, quedan dos palancas, en este orden:
    el botón «Actualizar ahora» del tablero no depende del cron para nada.
 
 > **Lo que pasó en este repositorio.** Seis citas seguidas sin disparar. Apagar y
-> encender el flujo lo resolvió, pero no de inmediato: la primera corrida programada
-> llegó unos treinta y cinco minutos después, dos ciclos más tarde. Si aplica el
-> remedio 1, dele al menos dos citas de margen antes de concluir que no funcionó.
+> encender el flujo lo resolvió, pero tardó: la primera corrida programada llegó
+> **dos horas y treinta y cinco minutos después**, tras cinco citas perdidas. Ese es
+> el margen que hay que dar antes de concluir que un remedio no funcionó —y antes de
+> tocar el archivo del flujo, porque cada edición reinicia el registro y vuelve a
+> empezar la espera desde cero.
 
 Para no enterarse por casualidad: si pasan tres lecturas sin datos nuevos, el sello de
 la esquina inferior izquierda del tablero se pone ámbar y lo dice.
